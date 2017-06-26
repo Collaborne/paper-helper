@@ -128,7 +128,7 @@ Sheet that rests at the bottom of the page, to be opened when the user needs hel
 				this._openButtonVisible = false;
 
 				const slideUp = [
-					{ transform: 'translateY(100%)' },
+					{ transform: 'translateY(calc(100% - 48px))' },
 					{ transform: 'translateY(0)' },
 				];
 				const slidingUp = this.$.sheet.animate(slideUp, { duration: 200 });
@@ -142,7 +142,7 @@ Sheet that rests at the bottom of the page, to be opened when the user needs hel
 
 				const slideDown = [
 					{ transform: 'translateY(0)' },
-					{ transform: 'translateY(100%)' },
+					{ transform: 'translateY(calc(100% - 48px))' },
 				];
 				const slidingDown = this.$.sheet.animate(slideDown, { duration: 200 });
 				slidingDown.onfinish = () => {
