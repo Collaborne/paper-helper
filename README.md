@@ -21,7 +21,7 @@ To use the element:
 -->
 ```html
 <paper-helper>
-    Try to relax a bit
+    I'd say: Try to relax a bit
 </paper-helper>
 ```
 
