@@ -1,0 +1,199 @@
+<!doctype html>
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../carbon-i18n-behavior/carbon-i18n-behavior.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../neon-animation/animations/scale-down-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-item/paper-icon-item.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
+<link rel="import" href="paper-helper.html">
+
+
+<!--
+Sheet that rests at the bottom of the page, to be opened when the user needs help
+-->
+<dom-module id="paper-helper-sheet">
+	<template>
+		<style>
+			:host {
+				background: var(--paper-grey-300);
+				color: var(--paper-grey-700);
+				position: relative;
+			}
+			.open-button {
+				bottom: 0;
+				text-align: center;
+				height: 50px;
+				line-height: 50px;
+				text-transform: uppercase;
+				cursor: pointer;
+			}
+			.close-button {
+				color: var(--paper-red-900);
+				cursor: pointer;
+			}
+			.helper {
+				padding: 8px 16px;
+			}
+
+			[hidden] {
+				display: none;
+			}
+		</style>
+
+		<div on-tap="_onTapOpen" hidden$="[[!_openButtonVisible]]" class="open-button">
+			<paper-ripple></paper-ripple>
+			[[i18n.action_open]]
+		</div>
+
+		<div hidden$="[[!_sheetVisible]]">
+			<paper-helper class="helper">[[title]]</paper-helper>
+			<slot></slot>
+			<paper-icon-item on-tap="_onTapClose" class="close-button">
+				<paper-ripple></paper-ripple>
+				<iron-icon icon="icons:close" slot="item-icon"></iron-icon>
+				[[i18n.action_close]]
+			</paper-icon-item>
+		</div>
+	</template>
+
+	<script>
+
+		Polymer({
+			is: "paper-helper-sheet",
+			properties: {
+				/**
+				 * Title displayed in the header
+				 */
+				title: String,
+
+				/**
+				 * Reflects whether the sheet is open or closed
+				 */
+				opened: {
+					type: Boolean,
+					value: false,
+					notify: true
+				},
+
+				animationConfig: {
+					value: function() {
+						return {
+							'slide-up': {
+								name: 'scale-up-animation',
+								node: this,
+								axis: 'y',
+								transformOrigin: '0% 100%',
+								timing: {
+									duration: 300
+								}
+							},
+							'slide-down': {
+								name: 'scale-down-animation',
+								node: this,
+								axis: 'y',
+								transformOrigin: '0% 100%',
+								timing: {
+									duration: 300
+								}
+							}
+						};
+					}
+				},
+
+				_sheetVisible: {
+					type: Boolean,
+					value: false,
+				},
+
+				_openButtonVisible: Boolean,
+			},
+
+			behaviors: [
+				Polymer.NeonAnimationRunnerBehavior,
+				Polymer.CarbonI18nBehavior
+			],
+
+			listeners: {
+				'neon-animation-finish': '_onAnimationFinish'
+			},
+
+			/**
+			 * Open the sheet
+			 */
+			open: function() {
+				this.opened = true;
+				this._hideButton();
+			},
+
+			/**
+			 * Close the sheet
+			 */
+			close: function() {
+				this.opened = false;
+				this.cancelAnimation();
+				this.playAnimation('slide-down', 'slide-down-sheet');
+			},
+
+			/**
+			 * Opens the sheet after firing an event. Called only when the user taps the panic button
+			 */
+			_onTapOpen: function() {
+				this.fire('paper-helper-sheet-open');
+				this.open();
+			},
+			/**
+			 * Closes the sheet after firing an event. Called only when the user taps the close button
+			 */
+			_onTapClose: function() {
+				this.fire('paper-helper-sheet-close');
+				this.close();
+			},
+
+			/**
+			 * Show panic button, playing the chosen animation
+			 */
+			_showButton: function() {
+				this._openButtonVisible = true;
+				this.cancelAnimation();
+				this.playAnimation('slide-up', 'slide-up-button');
+			},
+			/**
+			 * Hide panic button, playing the chosen animation
+			 */
+			_hideButton: function() {
+				this.cancelAnimation();
+				this.playAnimation('slide-down', 'slide-down-button');
+			},
+
+			/**
+			 * Show sheet, playing the chosen animation
+			 */
+			_showSheet: function() {
+				this._sheetVisible = true;
+				this.cancelAnimation();
+				this.playAnimation('slide-up', 'slide-up-sheet');
+			},
+
+			_onAnimationFinish: function(e, animation) {
+				switch(animation) {
+					case 'slide-down-sheet':
+						this._sheetVisible = false;
+						this._showButton();
+						break;
+					case 'slide-down-button':
+						this._openButtonVisible = false;
+						this._showSheet();
+						break;
+				}
+			}
+		});
+
+	</script>
+
+</dom-module>

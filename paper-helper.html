@@ -1,0 +1,66 @@
+<!doctype html>
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+
+<!--
+Cartoon-like helper for minigames
+-->
+<dom-module id="paper-helper">
+
+	<template>
+		<style>
+			:host {
+				@apply --layout-horizontal;
+				@apply --layout-center;
+			}
+			.face {
+				--iron-icon-height: 32px;
+				--iron-icon-width: 32px;
+				color: var(--disabled-text-color);
+			}
+			.speech-bubble-pointer {
+				border-style: solid;
+				border-width: 5px 10px 5px 0;
+				border-color: transparent var(--paper-grey-200);
+				display: block;
+				margin-left: 10px;
+			}
+			.speech-bubble {
+				position: relative;
+				width: var(--helper-text-width);
+				max-width: var(--helper-text-max-width);
+				padding: 8px;
+				background: var(--paper-grey-200);
+				color: var(--paper-grey-800);
+				-webkit-border-radius: 8px;
+				-moz-border-radius: 8px;
+				border-radius: 8px;
+			}
+		</style>
+
+		<iron-icon class="face" icon="icons:face"></iron-icon>
+
+		<div class="speech-bubble-pointer"></div>
+		<div class="speech-bubble">
+			<slot></slot>
+		</div>
+
+	</template>
+
+	<script>
+
+		class PaperHelper extends Polymer.Element {
+
+			static get is() {
+				return 'paper-helper';
+			}
+
+		}
+		customElements.define(PaperHelper.is, PaperHelper);
+
+	</script>
+
+</dom-module>

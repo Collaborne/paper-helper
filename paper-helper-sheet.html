@@ -1,0 +1,189 @@
+<!doctype html>
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-item/paper-icon-item.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="paper-helper.html">
+
+
+<!--
+Sheet that rests at the bottom of the page, to be opened when the user needs help
+-->
+<dom-module id="paper-helper-sheet">
+
+	<template>
+
+		<style>
+			.open-button,#sheet {
+				background: var(--paper-grey-300);
+				color: var(--paper-grey-700);
+				position: fixed;
+				left: 0;
+				right: 0;
+				bottom: 0;
+			}
+
+			.open-button {
+				padding: 16px;
+				width: 100%;
+				text-align: center;
+				margin: 0;
+				border-radius: 0;
+			}
+
+			.close-button {
+				color: var(--paper-red-900);
+				cursor: pointer;
+			}
+
+			.helper {
+				padding: 8px 16px;
+			}
+
+			[hidden] {
+				display: none;
+			}
+		</style>
+
+		<paper-button on-tap="_onTapOpen" hidden$="[[!_openButtonVisible]]" class="open-button">
+			[[openText]]
+		</paper-button>
+
+		<div id="sheet" hidden$="[[!_sheetVisible]]">
+			<paper-helper class="helper">[[title]]</paper-helper>
+			<slot></slot>
+			<paper-icon-item on-tap="_onTapClose" class="close-button">
+				<paper-ripple></paper-ripple>
+				<iron-icon icon="icons:close" slot="item-icon"></iron-icon>
+				[[closeText]]
+			</paper-icon-item>
+		</div>
+
+	</template>
+
+	<script>
+
+		class PaperHelperSheet extends Polymer.Element {
+
+			static get is() {
+				return 'paper-helper-sheet';
+			}
+
+			static get properties() {
+				return {
+					/**
+					* Title displayed in the header
+					*/
+					title: String,
+
+					/**
+					* Reflects whether the sheet is open or closed
+					*/
+					opened: {
+						type: Boolean,
+						value: false,
+						notify: true
+					},
+
+					openText: {
+						type: String,
+						value: 'Open',
+					},
+
+					/**
+					* Localized text to close the sheet
+					*/
+					closeText: {
+						type: String,
+						value: 'Close'
+					},
+
+					_openButtonVisible: {
+						type: Boolean,
+						value: true,
+					},
+
+					_sheetVisible: {
+						type: Boolean,
+						value: false,
+					},
+				};
+			}
+
+			ready() {
+				super.ready();
+			}
+
+			/**
+			* Open the sheet
+			*/
+			open() {
+				this.opened = true;
+				this._sheetVisible = true;
+				this._openButtonVisible = false;
+
+				const slideUp = [
+					{ transform: 'translateY(100%)' },
+					{ transform: 'translateY(0)' },
+				];
+				const slidingUp = this.$.sheet.animate(slideUp, { duration: 200 });
+			}
+
+			/**
+			* Close the sheet
+			*/
+			close() {
+				this.opened = false;
+
+				const slideDown = [
+					{ transform: 'translateY(0)' },
+					{ transform: 'translateY(100%)' },
+				];
+				const slidingDown = this.$.sheet.animate(slideDown, { duration: 200 });
+				slidingDown.onfinish = () => {
+					this._sheetVisible = false;
+					this._openButtonVisible = true;
+				};
+			}
+
+			/**
+			* Opens the sheet after firing an event. Called only when the user taps the open button
+			*/
+			_onTapOpen() {
+				this.dispatchEvent(new CustomEvent('paper-helper-sheet-open', {
+					bubbles: true,
+					composed: true,
+				}));
+
+				this.open();
+			}
+
+			/**
+			* Closes the sheet after firing an event. Called only when the user taps the close button
+			*/
+			_onTapClose() {
+				this.dispatchEvent(new CustomEvent('paper-helper-sheet-close', {
+					bubbles: true,
+					composed: true,
+				}));
+
+				this.close();
+			}
+
+			/**
+			* Show open button, playing the chosen animation
+			*/
+			_showButton() {
+				this._openButtonVisible = true;
+				this._cancelAndPlayAnimation('slide-up', 'slide-up-button');
+			}
+
+		}
+		customElements.define(PaperHelperSheet.is, PaperHelperSheet);
+
+	</script>
+
+</dom-module>
