@@ -1,4 +1,7 @@
 paper-helper [![Bower version](https://badge.fury.io/bo/paper-helper.svg)](http://badge.fury.io/bo/paper-helper) [![Travis state](https://travis-ci.org/Collaborne/paper-helper.svg?branch=master)](https://travis-ci.org/Collaborne/paper-helper) [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/Collaborne/paper-helper)
+
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/Collabornepaper-helper)
+[![Stars on vaadin.com/directory](https://img.shields.io/vaadin-directory/star/Collabornepaper-helper.svg)](https://vaadin.com/directory/component/Collabornepaper-helper)
 =========
 
 `paper-helper` provides cartoon-style element to provide help to users (Material Design). The web component is built with [Polymer](https://www.polymer-project.org).
